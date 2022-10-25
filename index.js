@@ -10,7 +10,7 @@ var cors = require('cors')
 app.use(cors());
 app.options('*', cors());
 
-const port = process.env.PORT || 353580;
+const port = process.env.PORT || 3530;
 app.use (express.json())
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
