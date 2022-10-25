@@ -34,6 +34,9 @@ app.use(function (req, res, next) {
 
 
 // available routes
+app.use('/',(req,res)=>{
+res.send('Hi everything is fine')
+})
 app.use('/api/auth', require('./routes/auth')),
 app.use('/api/profile', require('./routes/profile'))
 // app.use('/api/notes', require('./routes/notes'))
