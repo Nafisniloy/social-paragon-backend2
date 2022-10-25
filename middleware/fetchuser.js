@@ -5,7 +5,6 @@ const fetchuser = async(req, res, next) => {
   // get the user from jwt token and add id to req obj
   const token =await req.header("auth-token");
   if (!token) {
- console.log(token)
     res.status(401).send({ error: "Please authenticate using a valid token" });
   }
   else{
@@ -16,7 +15,7 @@ const fetchuser = async(req, res, next) => {
     next();
   } catch (error) {
     console.log(token)
-    res.status(401).send({ error: "Please authenticate using a valid token2" });
+    res.status(401).send({ error: "Please authenticate using a valid token" });
   }
      
 }

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "https://social-paragon.deta.dev/static/css/main.deb3da47.css",
+    "main.js": "https://social-paragon.deta.dev/static/js/main.dbe6a6ea.js",
+    "static/js/787.cda612ba.chunk.js": "https://social-paragon.deta.dev/static/js/787.cda612ba.chunk.js",
+    "index.html": "https://social-paragon.deta.dev/index.html",
+    "main.deb3da47.css.map": "https://social-paragon.deta.dev/static/css/main.deb3da47.css.map",
+    "main.dbe6a6ea.js.map": "https://social-paragon.deta.dev/static/js/main.dbe6a6ea.js.map",
+    "787.cda612ba.chunk.js.map": "https://social-paragon.deta.dev/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.deb3da47.css",
+    "static/js/main.dbe6a6ea.js"
+  ]
+}
