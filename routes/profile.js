@@ -7,6 +7,7 @@ var fs = require('fs');
 const crypto = require('crypto');
 const fetchuser = require("../middleware/fetchuser");
 const app = express()
+
 const multer  = require('multer')
 const grid = require('gridfs-stream');
 const {GridFsStorage} = require('multer-gridfs-storage');
@@ -17,6 +18,7 @@ const {GridFsStorage} = require('multer-gridfs-storage');
 // var upload = multer({ storage: storage });
 const profileSchema = require('../models/Profile');
 const connectToMongo = require("../db");
+const User = require("../models/User");
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 
@@ -186,13 +188,68 @@ router.get('/get/details', fetchuser,async(req,res)=>{
   let userId = await req.user.id;
   let success= "false"
   const  myProfile=  await profileSchema.findOne({userId: userId})
+  const verified= await User.findById(userId)
+ 
+    const name= verified.name
+    const gender= verified.gender
+    const dateOfBirth= verified.dateOfBirth
 if(myProfile){
 success= "true"
-  res.json({success,myProfile})
+  res.json({success,myProfile,name:name,gender:gender,dateOfBirth:dateOfBirth})
 }else{
 
   res.json({success,myProfile})
 }
+})
+router.post('/others/profile/image',async(req,res)=>{
+  let userId = await req.body.id;
+const user= await profileSchema.findOne({userId: userId})
+//   const db =await mongoose.connect("mongodb+srv://niloy:niloy123@cluster0.6k5pnzw.mongodb.net/social-paragon")
+
+if(user){
+if(user.profilePic){
+
+const filename=user.profilePic.img.data;
+
+
+// const newuser= db.fs.files.find ();
+//   const file=await  connectToMongo.fs.files.find( { filesname: user.profilePic.img.data } )
+const file=await gfs.files.findOne({ filename: filename })
+const id= filename
+await  gfs.files.findOne({ filename: filename }, (err, file) => {
+  // Check if file
+  if (!file || file.length === 0) {
+    return res.status(404).json({
+      err: 'No file exists'
+    });
+  }
+
+  // Check if image
+  if (file.contentType === 'image/webp' || file.contentType === 'image/png') {
+    // Read output to browser
+   const func=async()=>{
+
+     const readStream =await  gridfsBucket.openDownloadStreamByName(filename);
+     res.set('Content-Type',file.contentType)
+     readStream.pipe(res);
+    }
+    func()
+  } else {
+    res.status(404).json({
+      err: 'Not an image'
+    });
+  }
+});
+  
+}else{
+res.send(null)
+}
+
+// console.log(id)
+} else{
+res.send(null)
+}
+//   res.send(user)
 })
 
 module.exports = router;
