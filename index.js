@@ -35,6 +35,7 @@ app.use (express.json())
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
       res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,auth-token');
+      res.status(200)
       next();
   })
 
