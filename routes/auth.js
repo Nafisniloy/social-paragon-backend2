@@ -538,4 +538,23 @@ router.get(`/verify/user`, fetchuser, async (req, res) => {
   }
 });
 
+router.get('/get/id',fetchuser,async(req,res)=>{
+  let userId = await req.user.id;
+  if(userId){
+   let success= "true"
+    res.json({
+      success,
+      message: "Successful",
+      userId
+    });
+  }else{
+    let success= "false"
+    res.json({
+      success,
+      message: "Not a valid user",
+      userId
+    });
+  }
+})
+
 module.exports = router;

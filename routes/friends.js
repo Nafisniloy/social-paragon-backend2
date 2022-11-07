@@ -246,5 +246,74 @@ router.post('/check/status',fetchuser, async(req,res)=>{
   }
 })
 
+//router to get all friends
+
+router.post('/get/all/friends',fetchuser, async(req,res)=>{
+  let userId = await req.user.id;
+  if(userId){
+    const   allFriends = await friendRequest.find({userId:[userId]})
+    if (allFriends.length>0) {
+      let success= "true";
+      res.json({
+           success,
+           allFriends
+         });
+    } else {
+      let success= "false";
+      res.json({
+           success,
+           message: "No friends to show. Please add some friends",
+         });
+    }
+  }else{
+    let success= "false";
+    res.json({
+         success,
+         message: "You are not a valid user",
+       });
+  }
+
+})
+
+//router to get friends of friends
+
+router.post('/get/others/friends',fetchuser, async(req,res)=>{
+  let userId = await req.body.id
+  let myId= await req.user.id
+  let success = "false"
+  if(myId){
+    const   checkIffriends = await friendRequest.find({userId:[userId],friendsId:[myId]})
+    if(checkIffriends.length>0){
+    if(checkIffriends[0].status==="friends"){
+  if(userId){
+    const   allFriends = await friendRequest.find({userId:[userId]})
+    if (allFriends.length>0) {
+      let success= "true";
+      res.json({
+           success,
+           allFriends
+         });
+    } else {
+      let success= "false";
+      res.json({
+           success,
+           message: "No friends to show. Please add some friends",
+         });
+    }
+  }else{
+    let success= "false";
+    res.json({
+         success,
+         message: "You are not a valid user",
+       });
+  }}
+}else{
+  res.json({success, message:'You are not friends'})
+}}else{
+  res.json({success, message:'You are not friends'})
+}
+
+})
+
 
 module.exports = router;

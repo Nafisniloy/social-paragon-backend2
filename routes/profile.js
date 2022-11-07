@@ -1,13 +1,16 @@
 const express = require("express");
-var bodyParser = require('body-parser')
 const router = express.Router();
 const path = require("path");
-var mongoose = require('mongoose')
 var fs = require('fs');
 const crypto = require('crypto');
 const fetchuser = require("../middleware/fetchuser");
 const app = express()
+const profileSchema = require('../models/Profile');
+const connectToMongo = require("../db");
+const User = require("../models/User");
 
+var mongoose = require('mongoose')
+var bodyParser = require('body-parser')
 const multer  = require('multer')
 const grid = require('gridfs-stream');
 const {GridFsStorage} = require('multer-gridfs-storage');
@@ -16,9 +19,6 @@ const {GridFsStorage} = require('multer-gridfs-storage');
 // const storage = new GridFsStorage({ url });
 // const upload = multer({ storage });
 // var upload = multer({ storage: storage });
-const profileSchema = require('../models/Profile');
-const connectToMongo = require("../db");
-const User = require("../models/User");
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 
@@ -251,5 +251,55 @@ res.send(null)
 }
 //   res.send(user)
 })
+
+//Router for searching account
+router.post('/search/user',async(req,res)=>{
+  let success= "false"
+  let query =req.body.query;
+  if(query){
+
+    const result= await  User.find({name:{ "$regex": query, "$options": "i" }}).select(["name","id","verified"])
+    if(result.length>0){
+      
+      success= "true"
+      res.json({
+        success,
+        message: "Successful",
+        result
+      });
+    }else{
+      res.json({
+        success,
+        message: "No results found.",
+      });
+    }
+  }else{
+    res.json({
+      success,
+      message: "Please input something to search",
+    });
+  }
+})
+ // Routeer for getting a friends user name Only
+ router.post('/friends/username',async(req, res)=>{
+  let userId= await  req.body.userId
+    if(userId.length===24){
+     
+      let userName= await User.findById(userId).select("name")
+      let success= "true";
+      res.json({
+        success,
+       
+        userName
+      });
+    }else{
+      let success= "false";
+      res.json({
+        success,
+        message: "Not a user",
+      });
+    }
+ }
+ )
 
 module.exports = router;
