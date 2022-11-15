@@ -272,6 +272,7 @@ router.post(
             error: "Please try to login with correct creditionals",
           });
       } else {
+        if(user.password){
         const passwordCompare = await bycript.compare(password, user.password);
         if (!passwordCompare) {
           res
@@ -294,6 +295,13 @@ router.post(
           success = true;
           res.json({ success, authtoken });
         }
+      }else{
+        res
+        .json({
+          success,
+          error: "Please try signing in with Google",
+        });
+      }
       }
     } catch (error) {
       console.error(error.message);
@@ -555,6 +563,55 @@ router.get('/get/id',fetchuser,async(req,res)=>{
       userId
     });
   }
+})
+
+//Signup or Sign In using google
+router.post('/signin',async(req,res)=>{
+const user= req.body.user
+const email= user.email
+if(user.email_verified===true){
+if(email){
+  const alreadyuser= await User.findOne({email:email})
+  if(alreadyuser){
+        if(alreadyuser.verified==="false"){
+          await User.findOneAndUpdate({email:email}, { verified: "true" });
+        }
+        const data = {
+          user: {
+            id: alreadyuser.id,
+          },
+        };
+        const authtoken = jwt.sign(data, JWT_SECRET);
+      let   success = "true";
+        res.json({ success,status:"alreadyuser" , authtoken });      
+  }else{
+  await User.create({
+      name: user.name,
+      email: user.email,
+      dateOfBirth:" ",
+      gender:" ",
+      verified: "true",
+    });
+    const newuser = await User.findOne({ email: { $eq: user.email } });
+    const newuserId = newuser._id;
+    await profileSchema.create({userId: newuserId,  userName: newuser.name });
+    const data = {
+      user: {
+        id: newuser.id,
+      },
+    };
+    const authtoken = jwt.sign(data, JWT_SECRET);
+   let success = "true";
+    res.json({ success,status:"newuser" , authtoken });     
+  }
+}else{
+  res.json({success:"false",message:"Please try again."})
+}
+}else{
+  res.json({success:"false",message:"Please use a verified Email."})
+
+
+}
 })
 
 module.exports = router;

@@ -14,11 +14,10 @@ const UserSchema= new Schema({
     },
     password:{
         type : String,
-        required: true,  
     },
     gender:{
         type : String,
-        required: true,  
+        default:"",
     },
     date:{
         type : Date,
@@ -30,7 +29,7 @@ const UserSchema= new Schema({
     },
     dateOfBirth:{
         type : String,
-        required: true,  
+        default:"",
     },
 
 });
